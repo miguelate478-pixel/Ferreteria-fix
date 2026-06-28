@@ -1,0 +1,594 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum RecordStatus {
+  ACTIVE
+  INACTIVE
+  ARCHIVED
+}
+
+enum ProjectType {
+  RESIDENTIAL
+  COMMERCIAL
+  CONSTRUCTION
+  MAINTENANCE
+}
+
+enum ProjectStatus {
+  DRAFT
+  IN_PROGRESS
+  QUOTED
+  ORDERED
+  COMPLETED
+  ARCHIVED
+}
+
+enum RoomType {
+  BEDROOM
+  LIVING_ROOM
+  KITCHEN
+  BATHROOM
+  OFFICE
+  FACADE
+  COMMERCIAL_SPACE
+  OTHER
+}
+
+enum SurfaceType {
+  WALL
+  CEILING
+  FLOOR
+  DOOR
+  WINDOW
+  COLUMN
+  BEAM
+  BASEBOARD
+  OTHER
+}
+
+enum QuoteStatus {
+  DRAFT
+  SENT
+  ACCEPTED
+  EXPIRED
+  REJECTED
+  CONVERTED
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PREPARING
+  READY
+  DISPATCHED
+  DELIVERED
+  CANCELLED
+}
+
+enum FulfillmentType {
+  PICKUP
+  DELIVERY
+}
+
+model User {
+  id                String               @id @default(uuid()) @db.Uuid
+  email             String               @unique
+  name              String
+  phone             String?
+  authProviderId    String?              @unique
+  status            RecordStatus         @default(ACTIVE)
+  createdAt         DateTime             @default(now())
+  updatedAt         DateTime             @updatedAt
+  organizationLinks OrganizationMember[]
+  ownedProjects     Project[]            @relation("ProjectOwner")
+  projectLinks      ProjectMember[]
+  quotes            Quote[]              @relation("QuoteCustomer")
+  orders            Order[]              @relation("OrderCustomer")
+  auditLogs         AuditLog[]
+}
+
+model Organization {
+  id         String               @id @default(uuid()) @db.Uuid
+  legalName  String
+  tradeName  String
+  taxId      String?              @unique
+  type       String               @default("RETAILER")
+  status     RecordStatus         @default(ACTIVE)
+  createdAt  DateTime             @default(now())
+  updatedAt  DateTime             @updatedAt
+  members    OrganizationMember[]
+  branches   Branch[]
+  projects   Project[]
+  priceLists PriceList[]
+}
+
+model OrganizationMember {
+  organizationId String       @db.Uuid
+  userId         String       @db.Uuid
+  role           String
+  status         RecordStatus @default(ACTIVE)
+  createdAt      DateTime     @default(now())
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([organizationId, userId])
+}
+
+model Branch {
+  id             String              @id @default(uuid()) @db.Uuid
+  organizationId String              @db.Uuid
+  name           String
+  address        String
+  openingHours   Json?
+  status         RecordStatus        @default(ACTIVE)
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
+  organization   Organization        @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  inventorySites InventoryLocation[]
+  fulfillments   Fulfillment[]
+}
+
+model Project {
+  id             String          @id @default(uuid()) @db.Uuid
+  ownerId        String          @db.Uuid
+  organizationId String?         @db.Uuid
+  name           String
+  type           ProjectType
+  status         ProjectStatus   @default(DRAFT)
+  currency       String          @default("PEN")
+  brief          Json?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  owner          User            @relation("ProjectOwner", fields: [ownerId], references: [id])
+  organization   Organization?   @relation(fields: [organizationId], references: [id])
+  members        ProjectMember[]
+  rooms          Room[]
+  photos         Photo[]
+  palettes       Palette[]
+  calculations   Calculation[]
+  quotes         Quote[]
+}
+
+model ProjectMember {
+  projectId String   @db.Uuid
+  userId    String   @db.Uuid
+  role      String
+  canEdit   Boolean  @default(false)
+  createdAt DateTime @default(now())
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([projectId, userId])
+}
+
+model Room {
+  id           String        @id @default(uuid()) @db.Uuid
+  projectId    String        @db.Uuid
+  name         String
+  type         RoomType
+  length       Decimal?      @db.Decimal(10, 3)
+  width        Decimal?      @db.Decimal(10, 3)
+  height       Decimal?      @db.Decimal(10, 3)
+  notes        String?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  project      Project       @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  surfaces     Surface[]
+  photos       Photo[]
+  palettes     Palette[]
+  calculations Calculation[]
+}
+
+model Surface {
+  id               String            @id @default(uuid()) @db.Uuid
+  roomId           String            @db.Uuid
+  name             String
+  type             SurfaceType
+  geometry         Json?
+  grossArea        Decimal?          @db.Decimal(12, 3)
+  netArea          Decimal?          @db.Decimal(12, 3)
+  material         String?
+  currentState     String?
+  selected         Boolean           @default(true)
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  room             Room              @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  openings         Opening[]
+  measurements     Measurement[]
+  photoMasks       PhotoMask[]
+  calculationLines CalculationLine[]
+  paletteItems     PaletteItem[]
+}
+
+model Opening {
+  id        String   @id @default(uuid()) @db.Uuid
+  surfaceId String   @db.Uuid
+  type      String
+  width     Decimal  @db.Decimal(10, 3)
+  height    Decimal  @db.Decimal(10, 3)
+  quantity  Int      @default(1)
+  createdAt DateTime @default(now())
+  surface   Surface  @relation(fields: [surfaceId], references: [id], onDelete: Cascade)
+}
+
+model Measurement {
+  id              String   @id @default(uuid()) @db.Uuid
+  surfaceId       String   @db.Uuid
+  type            String
+  value           Decimal  @db.Decimal(12, 3)
+  unit            String
+  source          String
+  confidenceLevel Decimal? @db.Decimal(4, 3)
+  createdAt       DateTime @default(now())
+  surface         Surface  @relation(fields: [surfaceId], references: [id], onDelete: Cascade)
+}
+
+model Photo {
+  id           String      @id @default(uuid()) @db.Uuid
+  projectId    String      @db.Uuid
+  roomId       String?     @db.Uuid
+  storageKey   String
+  originalName String
+  mimeType     String
+  width        Int?
+  height       Int?
+  metadata     Json?
+  createdAt    DateTime    @default(now())
+  project      Project     @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  room         Room?       @relation(fields: [roomId], references: [id], onDelete: SetNull)
+  masks        PhotoMask[]
+}
+
+model PhotoMask {
+  id                String   @id @default(uuid()) @db.Uuid
+  photoId           String   @db.Uuid
+  surfaceId         String?  @db.Uuid
+  storageKey        String
+  modelName         String?
+  modelVersion      String?
+  manuallyCorrected Boolean  @default(false)
+  createdAt         DateTime @default(now())
+  photo             Photo    @relation(fields: [photoId], references: [id], onDelete: Cascade)
+  surface           Surface? @relation(fields: [surfaceId], references: [id], onDelete: SetNull)
+}
+
+model Color {
+  id           String         @id @default(uuid()) @db.Uuid
+  brand        String
+  code         String
+  name         String
+  rgbHex       String
+  lab          Json?
+  oklch        Json?
+  family       String
+  status       RecordStatus   @default(ACTIVE)
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  paletteItems PaletteItem[]
+  formulas     ColorFormula[]
+
+  @@unique([brand, code])
+}
+
+model Palette {
+  id          String        @id @default(uuid()) @db.Uuid
+  projectId   String        @db.Uuid
+  roomId      String?       @db.Uuid
+  name        String
+  explanation String
+  score       Decimal?      @db.Decimal(5, 2)
+  source      String        @default("RULE_ENGINE")
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  project     Project       @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  room        Room?         @relation(fields: [roomId], references: [id], onDelete: SetNull)
+  items       PaletteItem[]
+}
+
+model PaletteItem {
+  id         String   @id @default(uuid()) @db.Uuid
+  paletteId  String   @db.Uuid
+  colorId    String   @db.Uuid
+  surfaceId  String?  @db.Uuid
+  role       String
+  proportion Decimal  @db.Decimal(5, 2)
+  palette    Palette  @relation(fields: [paletteId], references: [id], onDelete: Cascade)
+  color      Color    @relation(fields: [colorId], references: [id])
+  surface    Surface? @relation(fields: [surfaceId], references: [id], onDelete: SetNull)
+}
+
+model Product {
+  id                    String                 @id @default(uuid()) @db.Uuid
+  sku                   String                 @unique
+  name                  String
+  brand                 String
+  category              String
+  description           String?
+  status                RecordStatus           @default(ACTIVE)
+  createdAt             DateTime               @default(now())
+  updatedAt             DateTime               @updatedAt
+  paintSpec             PaintSpec?
+  variants              ProductVariant[]
+  sourceCompatibilities ProductCompatibility[] @relation("CompatibilitySource")
+  targetCompatibilities ProductCompatibility[] @relation("CompatibilityTarget")
+}
+
+model PaintSpec {
+  id                 String   @id @default(uuid()) @db.Uuid
+  productId          String   @unique @db.Uuid
+  usage              String[]
+  compatibleSurfaces String[]
+  finish             String
+  nominalCoverage    Decimal  @db.Decimal(8, 2)
+  minimumCoats       Int
+  dryingMinutes      Int?
+  recoatingMinutes   Int?
+  technicalData      Json?
+  product            Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+}
+
+model ProductVariant {
+  id                String             @id @default(uuid()) @db.Uuid
+  productId         String             @db.Uuid
+  sku               String             @unique
+  barcode           String?
+  presentation      Decimal            @db.Decimal(10, 3)
+  unit              String
+  tintBase          String?
+  status            RecordStatus       @default(ACTIVE)
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  product           Product            @relation(fields: [productId], references: [id], onDelete: Cascade)
+  inventoryBalances InventoryBalance[]
+  supplierProducts  SupplierProduct[]
+  colorFormulas     ColorFormula[]
+  priceItems        PriceListItem[]
+  quoteItems        QuoteItem[]
+  orderItems        OrderItem[]
+}
+
+model ColorFormula {
+  id               String         @id @default(uuid()) @db.Uuid
+  colorId          String         @db.Uuid
+  productVariantId String         @db.Uuid
+  formula          Json
+  status           RecordStatus   @default(ACTIVE)
+  color            Color          @relation(fields: [colorId], references: [id], onDelete: Cascade)
+  productVariant   ProductVariant @relation(fields: [productVariantId], references: [id], onDelete: Cascade)
+
+  @@unique([colorId, productVariantId])
+}
+
+model ProductCompatibility {
+  id              String  @id @default(uuid()) @db.Uuid
+  sourceProductId String  @db.Uuid
+  targetProductId String  @db.Uuid
+  type            String
+  conditions      Json?
+  sourceProduct   Product @relation("CompatibilitySource", fields: [sourceProductId], references: [id], onDelete: Cascade)
+  targetProduct   Product @relation("CompatibilityTarget", fields: [targetProductId], references: [id], onDelete: Cascade)
+
+  @@unique([sourceProductId, targetProductId, type])
+}
+
+model Supplier {
+  id              String            @id @default(uuid()) @db.Uuid
+  name            String
+  taxId           String?           @unique
+  integrationType String?
+  status          RecordStatus      @default(ACTIVE)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  products        SupplierProduct[]
+}
+
+model SupplierProduct {
+  supplierId       String         @db.Uuid
+  productVariantId String         @db.Uuid
+  supplierCode     String
+  cost             Decimal?       @db.Decimal(12, 2)
+  leadTimeDays     Int?
+  updatedAt        DateTime       @updatedAt
+  supplier         Supplier       @relation(fields: [supplierId], references: [id], onDelete: Cascade)
+  productVariant   ProductVariant @relation(fields: [productVariantId], references: [id], onDelete: Cascade)
+
+  @@id([supplierId, productVariantId])
+}
+
+model InventoryLocation {
+  id        String             @id @default(uuid()) @db.Uuid
+  branchId  String             @db.Uuid
+  name      String
+  type      String
+  status    RecordStatus       @default(ACTIVE)
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
+  branch    Branch             @relation(fields: [branchId], references: [id], onDelete: Cascade)
+  balances  InventoryBalance[]
+}
+
+model InventoryBalance {
+  locationId       String            @db.Uuid
+  productVariantId String            @db.Uuid
+  available        Decimal           @default(0) @db.Decimal(14, 3)
+  reserved         Decimal           @default(0) @db.Decimal(14, 3)
+  inTransit        Decimal           @default(0) @db.Decimal(14, 3)
+  updatedAt        DateTime          @updatedAt
+  location         InventoryLocation @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  productVariant   ProductVariant    @relation(fields: [productVariantId], references: [id], onDelete: Cascade)
+
+  @@id([locationId, productVariantId])
+}
+
+model PriceList {
+  id             String          @id @default(uuid()) @db.Uuid
+  organizationId String          @db.Uuid
+  name           String
+  currency       String          @default("PEN")
+  segment        String
+  validFrom      DateTime
+  validTo        DateTime?
+  organization   Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  items          PriceListItem[]
+}
+
+model PriceListItem {
+  priceListId      String         @db.Uuid
+  productVariantId String         @db.Uuid
+  price            Decimal        @db.Decimal(12, 2)
+  minimumQuantity  Decimal?       @db.Decimal(12, 3)
+  priceList        PriceList      @relation(fields: [priceListId], references: [id], onDelete: Cascade)
+  productVariant   ProductVariant @relation(fields: [productVariantId], references: [id], onDelete: Cascade)
+
+  @@id([priceListId, productVariantId])
+}
+
+model Calculation {
+  id             String                @id @default(uuid()) @db.Uuid
+  projectId      String                @db.Uuid
+  roomId         String?               @db.Uuid
+  version        Int
+  type           String
+  inputSnapshot  Json
+  resultSnapshot Json
+  createdAt      DateTime              @default(now())
+  project        Project               @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  room           Room?                 @relation(fields: [roomId], references: [id], onDelete: SetNull)
+  lines          CalculationLine[]
+  materials      MaterialRequirement[]
+
+  @@unique([projectId, version, type])
+}
+
+model CalculationLine {
+  id                String      @id @default(uuid()) @db.Uuid
+  calculationId     String      @db.Uuid
+  surfaceId         String?     @db.Uuid
+  productId         String?     @db.Uuid
+  area              Decimal     @db.Decimal(12, 3)
+  coats             Int
+  nominalCoverage   Decimal     @db.Decimal(8, 2)
+  effectiveCoverage Decimal     @db.Decimal(8, 2)
+  litersRequired    Decimal     @db.Decimal(12, 3)
+  dataSnapshot      Json?
+  calculation       Calculation @relation(fields: [calculationId], references: [id], onDelete: Cascade)
+  surface           Surface?    @relation(fields: [surfaceId], references: [id], onDelete: SetNull)
+}
+
+model MaterialRequirement {
+  id            String      @id @default(uuid()) @db.Uuid
+  calculationId String      @db.Uuid
+  productId     String?     @db.Uuid
+  description   String
+  quantity      Decimal     @db.Decimal(12, 3)
+  unit          String
+  ruleApplied   String
+  calculation   Calculation @relation(fields: [calculationId], references: [id], onDelete: Cascade)
+}
+
+model Quote {
+  id             String         @id @default(uuid()) @db.Uuid
+  projectId      String         @db.Uuid
+  customerId     String         @db.Uuid
+  status         QuoteStatus    @default(DRAFT)
+  currentVersion Int            @default(1)
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  project        Project        @relation(fields: [projectId], references: [id])
+  customer       User           @relation("QuoteCustomer", fields: [customerId], references: [id])
+  versions       QuoteVersion[]
+}
+
+model QuoteVersion {
+  id            String      @id @default(uuid()) @db.Uuid
+  quoteId       String      @db.Uuid
+  version       Int
+  validUntil    DateTime?
+  currency      String      @default("PEN")
+  subtotal      Decimal     @db.Decimal(14, 2)
+  tax           Decimal     @db.Decimal(14, 2)
+  total         Decimal     @db.Decimal(14, 2)
+  snapshot      Json
+  pdfStorageKey String?
+  createdAt     DateTime    @default(now())
+  quote         Quote       @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+  items         QuoteItem[]
+  orders        Order[]
+
+  @@unique([quoteId, version])
+}
+
+model QuoteItem {
+  id               String          @id @default(uuid()) @db.Uuid
+  quoteVersionId   String          @db.Uuid
+  productVariantId String?         @db.Uuid
+  description      String
+  quantity         Decimal         @db.Decimal(12, 3)
+  unitPrice        Decimal         @db.Decimal(12, 2)
+  total            Decimal         @db.Decimal(14, 2)
+  snapshot         Json
+  quoteVersion     QuoteVersion    @relation(fields: [quoteVersionId], references: [id], onDelete: Cascade)
+  productVariant   ProductVariant? @relation(fields: [productVariantId], references: [id], onDelete: SetNull)
+}
+
+model Order {
+  id             String        @id @default(uuid()) @db.Uuid
+  quoteVersionId String?       @db.Uuid
+  customerId     String        @db.Uuid
+  status         OrderStatus   @default(PENDING)
+  currency       String        @default("PEN")
+  total          Decimal       @db.Decimal(14, 2)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  quoteVersion   QuoteVersion? @relation(fields: [quoteVersionId], references: [id], onDelete: SetNull)
+  customer       User          @relation("OrderCustomer", fields: [customerId], references: [id])
+  items          OrderItem[]
+  fulfillments   Fulfillment[]
+}
+
+model OrderItem {
+  id               String          @id @default(uuid()) @db.Uuid
+  orderId          String          @db.Uuid
+  productVariantId String?         @db.Uuid
+  description      String
+  quantity         Decimal         @db.Decimal(12, 3)
+  unitPrice        Decimal         @db.Decimal(12, 2)
+  total            Decimal         @db.Decimal(14, 2)
+  snapshot         Json
+  order            Order           @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productVariant   ProductVariant? @relation(fields: [productVariantId], references: [id], onDelete: SetNull)
+}
+
+model Fulfillment {
+  id          String          @id @default(uuid()) @db.Uuid
+  orderId     String          @db.Uuid
+  type        FulfillmentType
+  branchId    String?         @db.Uuid
+  address     String?
+  scheduledAt DateTime?
+  status      String          @default("PENDING")
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  order       Order           @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  branch      Branch?         @relation(fields: [branchId], references: [id], onDelete: SetNull)
+}
+
+model AuditLog {
+  id         String   @id @default(uuid()) @db.Uuid
+  actorId    String?  @db.Uuid
+  entityType String
+  entityId   String
+  action     String
+  before     Json?
+  after      Json?
+  createdAt  DateTime @default(now())
+  actor      User?    @relation(fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@index([entityType, entityId, createdAt])
+}

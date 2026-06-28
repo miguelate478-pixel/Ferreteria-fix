@@ -1,0 +1,27 @@
+{
+  "name": "ferreteria-estudio-digital",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "scripts": {
+    "dev": "npm run build -w @ferreteria/calculation-engine && concurrently -n engine,api,web -c auto \"npm run dev -w @ferreteria/calculation-engine\" \"npm run start:dev -w @ferreteria/api\" \"npm run dev -w @ferreteria/web\"",
+    "build": "npm run build -w @ferreteria/calculation-engine && npm run build -w @ferreteria/api && npm run build -w @ferreteria/web",
+    "typecheck": "npm run typecheck -w @ferreteria/calculation-engine && npm run typecheck -w @ferreteria/api && npm run typecheck -w @ferreteria/web",
+    "test": "npm run test -w @ferreteria/calculation-engine",
+    "lint": "npm run lint -w @ferreteria/api && npm run lint -w @ferreteria/web",
+    "db:generate": "npm run prisma:generate -w @ferreteria/api",
+    "db:migrate": "npm run prisma:migrate -w @ferreteria/api",
+    "db:seed": "npm run prisma:seed -w @ferreteria/api",
+    "docker:up": "docker compose up -d",
+    "docker:down": "docker compose down"
+  },
+  "devDependencies": {
+    "concurrently": "9.2.1"
+  }
+}

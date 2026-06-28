@@ -1,0 +1,24 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "typecheck-typescript-on-save",
+      "description": "Ejecuta typecheck después de guardar archivos TypeScript. Está desactivado por defecto para no interrumpir la edición inicial.",
+      "trigger": "PostFileSave",
+      "matcher": "\\.(ts|tsx)$",
+      "action": { "type": "command", "command": "npm run typecheck" },
+      "timeout": 180,
+      "enabled": false
+    },
+    {
+      "name": "review-completed-spec-task",
+      "description": "Revisa calidad, pruebas y documentación al terminar una tarea de spec.",
+      "trigger": "PostTaskExec",
+      "action": {
+        "type": "agent",
+        "prompt": "Revisa la tarea recién ejecutada contra sus requisitos y el steering del workspace. Comprueba errores de TypeScript, pruebas, seguridad multi-tenant, accesibilidad y documentación. Corrige únicamente problemas vinculados con la tarea, ejecuta los controles pertinentes y resume los cambios."
+      },
+      "enabled": true
+    }
+  ]
+}
