@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 // ─── Colores base disponibles en ferretería ──────────────────────────────────
 // Estas son las pinturas que el vendedor tiene en stock para mezclar.
@@ -215,6 +215,18 @@ export function ColorRecipe() {
   const [volume, setVolume] = useState<'1L' | '4L'>('1L');
   const workerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // Leer hex desde la URL si viene del buscador
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const params = new URLSearchParams(window.location.search);
+    const hex = params.get('hex');
+    if (hex && /^#[0-9A-Fa-f]{6}$/.test(hex)) {
+      setTargetHex(hex);
+      setTargetName('');
+      calculate(hex, BASE_PAINTS);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const calculate = useCallback((hex: string, activeBases: typeof BASE_PAINTS) => {
     if (workerRef.current) clearTimeout(workerRef.current);
     setLoading(true);
