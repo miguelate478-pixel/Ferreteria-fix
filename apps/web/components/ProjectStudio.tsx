@@ -3,6 +3,9 @@
 import { useMemo, useState } from 'react';
 import { calculatePaint, optimizePackages } from '@ferreteria/calculation-engine';
 import { ColorMixingAssistant } from './ColorMixingAssistant';
+import { ColorSearch } from './ColorSearch';
+import { PhotoVisualizer } from './PhotoVisualizer';
+import { QuoteShare } from './QuoteShare';
 
 const palettes = [
   {
@@ -31,7 +34,7 @@ const packages = [
   { id: '15L', liters: 15, price: 329.9, stock: 3 },
 ];
 
-const LAYERS = ['Brief', 'Medidas', 'Superficies', 'Color', 'Materiales', 'Cotización'];
+const LAYERS = ['Buscar color', 'Medidas', 'Superficies', 'Color', 'Visualizar', 'Cotización'];
 
 export function ProjectStudio() {
   const [length, setLength] = useState(5);
@@ -121,9 +124,38 @@ export function ProjectStudio() {
             <span className="confidence">Medición guiada · alta confianza</span>
           </div>
 
-          {/* capa Color → muestra el asistente de mezcla */}
-          {activeLayer === 3 ? (
+          {/* capa 0 → Buscar color */}
+          {activeLayer === 0 ? (
+            <ColorSearch />
+          ) : activeLayer === 3 ? (
+            /* capa 3 → Mezclar / armonías / catálogo */
             <ColorMixingAssistant />
+          ) : activeLayer === 4 ? (
+            /* capa 4 → Visualizador sobre foto */
+            <PhotoVisualizer />
+          ) : activeLayer === 5 ? (
+            /* capa 5 → Compartir cotización */
+            <QuoteShare
+              quote={{
+                projectName: 'Dormitorio principal',
+                ambientName: `Dormitorio 01 · ${length}×${width}×${height} m`,
+                paintableArea: result.netWallArea,
+                litersRequired: result.litersRequired,
+                coats,
+                palette: { name: selectedPalette.name, colors: selectedPalette.colors },
+                packages: (packageSolution?.packages ?? []).map((p) => ({
+                  id: p.id,
+                  quantity: p.quantity,
+                  price: p.price,
+                })),
+                materialsTotal: 186.7,
+                grandTotal: grandTotal,
+                currency: 'S/',
+                branch: 'Sucursal Miraflores',
+                validUntil: '31/07/2026',
+              }}
+              pdfUrl={`${apiUrl}/api/quotes/demo/pdf`}
+            />
           ) : (
             <>
               <div className="room-canvas">

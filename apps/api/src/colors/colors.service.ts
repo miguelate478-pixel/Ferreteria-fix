@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../common/prisma/prisma.service';
 import { MixColorsDto } from './dto/mix-colors.dto';
+import { interpretColorQuery } from './color-vocabulary';
 
 // ─────────────────────────────────────────────
 // Helpers para trabajar en espacio OkLab
@@ -86,6 +87,25 @@ export function colorDistance(hex1: string, hex2: string): number {
   const [L1, a1, b1] = linearToOklab(...hexToLinear(hex1));
   const [L2, a2, b2] = linearToOklab(...hexToLinear(hex2));
   return Math.sqrt((L1 - L2) ** 2 + (a1 - a2) ** 2 + (b1 - b2) ** 2);
+}
+
+/**
+ * Ajusta un color en OkLab aplicando un desplazamiento de L (claridad) y C (croma).
+ * shift: -1 = más oscuro/apagado, 0 = sin cambio, +1 = más claro/saturado
+ */
+function adjustOklab(hex: string, lightnessShift: number, chromaShift: number): string {
+  const linear = hexToLinear(hex);
+  const [L, a, b] = linearToOklab(...linear);
+  const chroma = Math.sqrt(a * a + b * b);
+  const hue = Math.atan2(b, a);
+
+  const newL = Math.max(0.05, Math.min(0.95, L + lightnessShift * 0.15));
+  const newChroma = Math.max(0, chroma + chromaShift * 0.06);
+  const newA = newChroma * Math.cos(hue);
+  const newB = newChroma * Math.sin(hue);
+
+  const [lr, lg, lbv] = oklabToLinear(newL, newA, newB);
+  return linearToHex(lr, lg, lbv);
 }
 
 // ─────────────────────────────────────────────
@@ -219,5 +239,86 @@ export class ColorsService {
     }
 
     return { scheme, baseHex, colors };
+  }
+
+  /**
+   * Búsqueda inteligente en lenguaje natural.
+   * "verde menta suave" → interpreta → ajusta L/C en OkLab → rankea catálogo.
+   */
+  async searchByDescription(query: string, limit = 8) {
+    const interpreted = interpretColorQuery(query);
+
+    // Traer todos los colores activos para rankear
+    const allColors = await this.prisma.color.findMany({
+      where: { status: 'ACTIVE' },
+      include: {
+        formulas: {
+          include: {
+            productVariant: {
+              include: {
+                product: { select: { id: true, name: true, brand: true } },
+                inventoryBalances: {
+                  include: { location: { include: { branch: { select: { id: true, name: true } } } } },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!interpreted) {
+      // Fallback: búsqueda de texto simple
+      const textResults = allColors.filter(
+        (c) =>
+          c.name.toLowerCase().includes(query.toLowerCase()) ||
+          c.code.toLowerCase().includes(query.toLowerCase()),
+      );
+      return {
+        query,
+        interpreted: null,
+        results: textResults.slice(0, limit).map((c) => ({
+          ...c,
+          distance: 0,
+          inStock: c.formulas.some((f) =>
+            f.productVariant.inventoryBalances.some((ib) => Number(ib.available) > 0),
+          ),
+        })),
+      };
+    }
+
+    // Ajustar el color de referencia con los modificadores de brillo/saturación
+    let refHex = interpreted.referenceHex;
+    if (interpreted.lightnessShift !== 0 || interpreted.chromaShift !== 0) {
+      refHex = adjustOklab(refHex, interpreted.lightnessShift, interpreted.chromaShift);
+    }
+
+    const ranked = allColors
+      .map((c) => ({
+        ...c,
+        distance: colorDistance(refHex, c.rgbHex),
+        inStock: c.formulas.some((f) =>
+          f.productVariant.inventoryBalances.some((ib) => Number(ib.available) > 0),
+        ),
+      }))
+      .sort((a, b) => a.distance - b.distance)
+      .slice(0, limit)
+      .map(({ distance, ...c }) => ({
+        ...c,
+        distance: Math.round(distance * 1000) / 1000,
+      }));
+
+    return {
+      query,
+      interpreted: {
+        referenceHex: refHex,
+        description: interpreted.description,
+        confidence: interpreted.confidence,
+        lightnessShift: interpreted.lightnessShift,
+        chromaShift: interpreted.chromaShift,
+        matchedKeywords: interpreted.matchedKeywords,
+      },
+      results: ranked,
+    };
   }
 }

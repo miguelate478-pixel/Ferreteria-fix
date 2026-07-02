@@ -11,9 +11,12 @@ export default function HomePage() {
             <small>Estudio digital de proyectos</small>
           </div>
         </div>
-        <nav>
-          <Link href="/color" style={{ marginRight: 24 }}>Combinador de colores</Link>
-          <Link href="/studio">Abrir estudio</Link>
+        <nav style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
+          <Link href="/buscar">Buscar colores</Link>
+          <Link href="/visualizar">Visualizador</Link>
+          <Link href="/color">Combinador</Link>
+          <Link href="/cotizar">Cotización</Link>
+          <Link href="/studio">Estudio</Link>
         </nav>
       </header>
 

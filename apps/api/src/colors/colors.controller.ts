@@ -44,4 +44,19 @@ export class ColorsController {
   ) {
     return this.service.generateHarmony(hex, scheme);
   }
+
+  @Get('search')
+  @ApiOperation({
+    summary: 'Búsqueda inteligente por descripción en lenguaje natural',
+    description:
+      'Interpreta frases como "verde menta suave" o "azul marino profundo" y devuelve los colores más cercanos del catálogo usando distancia OkLab.',
+  })
+  @ApiQuery({ name: 'q', required: true, description: 'Descripción en lenguaje natural, ej. "verde menta suave"' })
+  @ApiQuery({ name: 'limit', required: false, description: 'Número máximo de resultados (default 8)' })
+  searchByDescription(
+    @Query('q') q: string,
+    @Query('limit') limit?: string,
+  ) {
+    return this.service.searchByDescription(q, limit ? parseInt(limit, 10) : 8);
+  }
 }
