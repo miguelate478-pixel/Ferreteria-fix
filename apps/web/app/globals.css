@@ -1221,3 +1221,308 @@ body::before {
   .qs-root { grid-template-columns: 1fr; }
   .qs-summary { border-right: 0; border-bottom: 1px solid var(--line); }
 }
+
+/* ═══════════════════════════════════════════════
+   ColorRecipe — Receta de mezcla de colores
+═══════════════════════════════════════════════ */
+
+.cr-root { }
+
+.cr-header {
+  padding: 28px 28px 20px;
+  border: 1px solid var(--line);
+  background: var(--white);
+}
+
+.cr-title {
+  font-family: Georgia, serif;
+  font-weight: 400;
+  font-size: 28px;
+  margin: 6px 0 4px;
+}
+
+.cr-subtitle {
+  color: var(--muted);
+  font-size: 12px;
+  margin: 0;
+  line-height: 1.55;
+  max-width: 620px;
+}
+
+/* selector de color objetivo */
+.cr-target-section {
+  border: 1px solid var(--line);
+  border-top: 0;
+  background: var(--white);
+  padding: 24px 28px;
+}
+
+.cr-target-pick {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 32px;
+  align-items: start;
+}
+
+.cr-target-left { display: flex; flex-direction: column; gap: 12px; }
+
+.cr-big-pick {
+  cursor: pointer;
+  display: block;
+  position: relative;
+}
+
+.cr-big-swatch {
+  width: 160px;
+  height: 120px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 12px;
+  border: 1px solid var(--ink);
+  transition: box-shadow .15s;
+}
+
+.cr-big-pick:hover .cr-big-swatch { box-shadow: 0 0 0 3px var(--ink); }
+.cr-big-pick:focus-within .cr-big-swatch { outline: 2px solid var(--ink); outline-offset: 2px; }
+
+.cr-big-hex { font-family: Georgia, serif; font-size: 18px; letter-spacing: .04em; }
+.cr-big-swatch small { font-size: 9px; opacity: .7; }
+
+.cr-hidden-input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.cr-hex-manual { display: flex; gap: 8px; align-items: center; }
+.cr-hex-manual .ca-text-input { width: 120px; font-family: Georgia, serif; font-size: 13px; }
+
+/* sugerencias */
+.cr-target-right { }
+
+.cr-suggestions {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+}
+
+.cr-suggestion {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: 1px solid var(--line);
+  padding: 7px 10px;
+  cursor: pointer;
+  font-size: 11px;
+  color: var(--ink);
+  text-align: left;
+  transition: border-color .12s, background .12s;
+}
+
+.cr-suggestion:hover { border-color: var(--ink); background: var(--paper); }
+.cr-suggestion.active { border-color: var(--ink); background: var(--paper-deep); font-weight: 700; }
+
+.cr-sug-dot { width: 18px; height: 18px; flex-shrink: 0; border: 1px solid rgba(0,0,0,.1); }
+
+/* bases config */
+.cr-bases-toggle { margin-top: 16px; }
+
+.cr-bases-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+
+.cr-base-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: 1px solid var(--line);
+  padding: 5px 10px;
+  font-size: 11px;
+  cursor: pointer;
+  color: var(--ink);
+  transition: border-color .12s;
+}
+
+.cr-base-chip:hover { border-color: var(--ink); }
+.cr-base-chip.off { opacity: .45; }
+
+.cr-base-dot { width: 14px; height: 14px; border: 1px solid rgba(0,0,0,.15); flex-shrink: 0; }
+.cr-base-off { color: #9a3020; font-size: 10px; margin-left: 2px; }
+
+/* resultado */
+.cr-result {
+  border: 1px solid var(--ink);
+  border-top: 0;
+  background: var(--white);
+  padding: 24px 28px 32px;
+}
+
+/* comparación */
+.cr-compare {
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.cr-compare-col { flex: 1; }
+
+.cr-compare-swatch {
+  height: 100px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 12px;
+  border: 1px solid var(--line);
+  transition: background .3s;
+}
+
+.cr-compare-swatch span { font-family: Georgia, serif; font-size: 16px; letter-spacing: .04em; }
+.cr-compare-swatch small { font-size: 10px; }
+
+.cr-compare-arrow {
+  font-size: 24px;
+  color: var(--muted);
+  padding-bottom: 8px;
+  flex-shrink: 0;
+}
+
+.cr-warn {
+  background: rgba(154,94,73,.08);
+  border-left: 3px solid #9a4020;
+  padding: 10px 14px;
+  font-size: 11px;
+  color: #7a3020;
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+
+/* receta card */
+.cr-recipe-card {
+  border: 1px solid var(--line);
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.cr-recipe-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.cr-recipe-header .ca-section-label { margin-bottom: 0; }
+
+.cr-vol-toggle { display: flex; gap: 0; }
+
+.cr-vol-btn {
+  background: transparent;
+  border: 1px solid var(--line);
+  padding: 4px 12px;
+  font-size: 11px;
+  cursor: pointer;
+  color: var(--muted);
+  margin-left: -1px;
+  transition: background .12s;
+}
+
+.cr-vol-btn.active { background: var(--ink); color: var(--white); border-color: var(--ink); z-index: 1; }
+
+/* barra de proporciones */
+.cr-bar {
+  display: flex;
+  height: 28px;
+  border: 1px solid var(--ink);
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+
+.cr-bar-seg { transition: flex .3s ease; }
+
+/* partes */
+.cr-part-row {
+  display: grid;
+  grid-template-columns: 32px 1fr auto;
+  gap: 12px;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.cr-part-swatch { width: 28px; height: 28px; border: 1px solid var(--line); flex-shrink: 0; }
+
+.cr-part-info b { font-size: 13px; display: block; }
+.cr-part-info span { font-size: 10px; color: var(--muted); }
+
+.cr-part-amount { text-align: right; }
+.cr-part-amount strong { font-family: Georgia, serif; font-size: 20px; font-weight: 400; display: block; }
+.cr-part-amount span { font-size: 10px; color: var(--muted); }
+
+/* instrucciones */
+.cr-instructions {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.cr-steps {
+  padding-left: 18px;
+  margin: 0;
+}
+
+.cr-steps li {
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.7;
+  padding: 1px 0;
+}
+
+/* tabla de cantidades */
+.cr-quantities {
+  border: 1px solid var(--line);
+  padding: 16px 20px;
+}
+
+.cr-qty-table { margin-top: 10px; }
+
+.cr-qty-header,
+.cr-qty-row {
+  display: grid;
+  grid-template-columns: 180px repeat(5, 1fr);
+  gap: 0;
+  font-size: 11px;
+  border-bottom: 1px solid var(--line);
+  padding: 8px 0;
+}
+
+.cr-qty-header { font-weight: 700; color: var(--muted); font-size: 9px; letter-spacing: .06em; }
+
+.cr-qty-row span { color: var(--muted); display: flex; align-items: center; gap: 6px; }
+.cr-qty-row span:first-child { color: var(--ink); font-weight: 500; }
+
+.cr-qty-dot { width: 12px; height: 12px; display: inline-block; flex-shrink: 0; border: 1px solid rgba(0,0,0,.1); }
+
+@media (max-width: 760px) {
+  .cr-target-pick { grid-template-columns: 1fr; }
+  .cr-suggestions { grid-template-columns: repeat(3, 1fr); }
+  .cr-big-swatch { width: 100%; }
+  .cr-compare { flex-direction: column; gap: 8px; }
+  .cr-compare-arrow { display: none; }
+  .cr-qty-header,
+  .cr-qty-row { grid-template-columns: 130px repeat(5, 1fr); font-size: 10px; }
+}
+
+@media (max-width: 520px) {
+  .cr-suggestions { grid-template-columns: repeat(2, 1fr); }
+  .cr-quantities { display: none; } /* tabla muy ancha en móvil, ocultar */
+}
