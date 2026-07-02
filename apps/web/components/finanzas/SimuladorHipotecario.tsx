@@ -247,12 +247,18 @@ function calcularHipoteca(
 
   const cuotaMensual = calcularCuota(prestamo, tem, meses);
 
-  // Seguros (estimaciones de mercado peruano)
-  const seguroDesgravamen = banco.seguros ? prestamo * 0.00028 : 0; // ~0.028% mensual del saldo
-  const seguroInmueble = banco.seguros ? precioInmueble * 0.000083 : 0; // ~0.1% anual
+  // Seguros estimados (mercado peruano)
+  // Seguro desgravamen: ~0.028%/mes sobre saldo inicial (se va reduciendo, aquí promedio)
+  // Para la cuota total mostramos el del primer mes (el más alto)
+  const seguroDesgravamen = banco.seguros ? prestamo * 0.00028 : 0;
+  // Seguro inmueble: ~0.10% anual sobre valor del inmueble (fijo)
+  const seguroInmueble = banco.seguros ? (precioInmueble * 0.001) / 12 : 0;
 
   const cuotaTotal = cuotaMensual + seguroDesgravamen + seguroInmueble;
-  const totalPagar = cuotaTotal * meses + cuotaInicial;
+  // Total pagado = cuota inicial + (cuota capital+intereses × meses) + (seguros × meses)
+  // El seguro de desgravamen baja con el saldo, aquí usamos promedio (50% del inicial)
+  const seguroDesgravamenPromedio = banco.seguros ? (prestamo / 2) * 0.00028 : 0;
+  const totalPagar = cuotaInicial + cuotaMensual * meses + (seguroDesgravamenPromedio + seguroInmueble) * meses;
   const totalIntereses = totalPagar - precioFinal;
   const tcem = tem * 100;
   const relacionCuotaIngreso = ingresoMensual > 0 ? (cuotaTotal / ingresoMensual) * 100 : 0;

@@ -147,6 +147,11 @@ export function PlanAhorro() {
                   Ahorrá S/ {porMes.toFixed(2)}/mes para llegar a tiempo
                 </p>
               )}
+              {!completada && porMes === 0 && meses === 0 && (
+                <p className="fin-meta-sugerencia" style={{ color: '#ff6b6b' }}>
+                  ⚠ El plazo venció. Extendé la fecha o aportá lo que puedas.
+                </p>
+              )}
 
               {aporteId === m.id ? (
                 <div className="fin-row-gap" style={{ marginTop: 10 }}>

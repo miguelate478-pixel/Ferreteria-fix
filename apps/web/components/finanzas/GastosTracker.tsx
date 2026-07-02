@@ -36,12 +36,12 @@ export function GastosTracker() {
   const [editPres, setEditPres] = useState(false);
   const [mes, setMes] = useState(getMes());
 
-  // Persistencia en localStorage
+  // Persistencia en localStorage — carga los gastos del mes seleccionado
   useEffect(() => {
     const saved = localStorage.getItem(`gastos_${mes}`);
-    if (saved) setGastos(JSON.parse(saved));
+    setGastos(saved ? JSON.parse(saved) : []);
     const pres = localStorage.getItem(`presupuesto_${mes}`);
-    if (pres) setPresupuesto(pres);
+    setPresupuesto(pres ?? '');
   }, [mes]);
 
   const save = (g: Gasto[]) => {
@@ -88,7 +88,7 @@ export function GastosTracker() {
         <input
           type="month"
           value={mes}
-          onChange={(e) => { setMes(e.target.value); setGastos([]); }}
+          onChange={(e) => setMes(e.target.value)}
           className="fin-month-input"
           aria-label="Mes a registrar"
         />
