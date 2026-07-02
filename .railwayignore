@@ -1,0 +1,10 @@
+node_modules/
+.next/
+dist/
+.git/
+.kiro/
+*.log
+.env.local
+.env.example
+*.md
+docker-compose.yml

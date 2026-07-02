@@ -13,6 +13,7 @@ export default function HomePage() {
         </div>
         <nav style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
           <Link href="/finanzas" style={{ fontWeight: 700 }}>💰 Mis Finanzas</Link>
+          <Link href="/showcase" style={{ fontWeight: 700 }}>✨ Showcase</Link>
           <Link href="/hipoteca">🏠 Hipoteca</Link>
           <Link href="/receta">Receta de color</Link>
           <Link href="/buscar">Buscar colores</Link>
@@ -23,15 +24,15 @@ export default function HomePage() {
 
       <section className="hero-grid">
         <div className="hero-copy">
-          <p className="eyebrow">NO COMPRES PINTURA. DISEÑA EL RESULTADO.</p>
-          <h1>¿Qué espacio quieres transformar?</h1>
+          <p className="eyebrow">DISEÑO PROFESIONAL HECHO SIMPLE</p>
+          <h1>Transforma tu espacio con precisión profesional</h1>
           <p className="hero-lead">
-            Describe el ambiente, mide las superficies y prueba una dirección de color.
-            El sistema arma cantidades, materiales, stock y presupuesto alrededor de tu proyecto.
+            Visualiza, calcula y cotiza proyectos de pintura completos en minutos. 
+            Sistema inteligente que combina diseño, mediciones precisas y presupuestos automáticos para crear tu espacio ideal.
           </p>
           <div className="hero-actions">
-            <Link className="primary-action" href="/studio">Empezar una habitación</Link>
-            <span>Ejemplo inicial: dormitorio de 20 m² de piso</span>
+            <Link className="primary-action" href="/studio">Comenzar mi proyecto</Link>
+            <span>Crea tu primer diseño en 5 minutos</span>
           </div>
         </div>
 
@@ -44,9 +45,21 @@ export default function HomePage() {
       </section>
 
       <section className="principles-strip">
-        <article><span>01</span><h2>Medir</h2><p>Distingue piso, paredes, techo y aberturas.</p></article>
-        <article><span>02</span><h2>Decidir</h2><p>Explica por qué una combinación funciona.</p></article>
-        <article><span>03</span><h2>Resolver</h2><p>Completa pintura, materiales, stock y cotización.</p></article>
+        <article>
+          <span>01</span>
+          <h2>Medir</h2>
+          <p>Calcula superficies exactas con nuestra herramienta inteligente. Distingue paredes, techos y aberturas automáticamente.</p>
+        </article>
+        <article>
+          <span>02</span>
+          <h2>Diseñar</h2>
+          <p>Explora paletas de color profesionales y visualiza el resultado en tiempo real. Armonía garantizada.</p>
+        </article>
+        <article>
+          <span>03</span>
+          <h2>Cotizar</h2>
+          <p>Genera presupuestos detallados instantáneos con materiales, cantidades exactas y disponibilidad en stock.</p>
+        </article>
       </section>
     </main>
   );

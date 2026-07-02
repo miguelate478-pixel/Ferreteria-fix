@@ -1,5 +1,25 @@
 # Estudio Digital de Proyectos para Ferretería
 
+## 🎨 ACTUALIZACIÓN: Diseño Premium v2.0
+
+**¡Nuevo!** El proyecto ahora incluye un sistema de diseño premium completo con:
+
+- ✨ **Glassmorphism** - Efectos de vidrio modernos con backdrop-filter
+- 🎬 **Animaciones fluidas** - 10+ animaciones predefinidas optimizadas
+- 🌈 **Gradientes premium** - 6 nuevos gradientes (Aurora, Sunset, Ocean)
+- 📱 **100% Responsive** - Mobile-first con breakpoints optimizados
+- ♿ **Accesible** - WCAG compliance y motion preferences
+- ⚡ **Performance** - GPU acceleration y CSS optimizado
+
+**Ver demo en vivo**: http://localhost:3000/showcase
+
+📚 **Documentación completa**:
+- [Cambios detallados](DESIGN_UPDATE.md)
+- [Guía de uso](PREMIUM_USAGE_GUIDE.md)
+- [Changelog](CHANGELOG_PREMIUM.md)
+
+---
+
 Repositorio preparado para abrir directamente en **Kiro IDE**. Incluye una vertical funcional del producto y especificaciones completas para continuar su desarrollo con un flujo guiado por requisitos.
 
 ## Qué incluye
@@ -73,6 +93,45 @@ Kiro detectará automáticamente los archivos de `.kiro/steering`, `.kiro/specs`
 ## Estado real del proyecto
 
 El ZIP contiene una **base ejecutable y una vertical funcional**, además del diseño completo del producto. No representa una plataforma de producción terminada: autenticación empresarial, procesamiento avanzado de fotografías, pagos reales, integraciones ERP/POS y sincronización con proveedores están especificados como tareas posteriores dentro de Kiro.
+
+## 🚂 Deploy en Railway
+
+Para desplegar la aplicación en producción:
+
+### Opción 1: Script Automático (Recomendado)
+
+**Windows PowerShell:**
+```powershell
+.\deploy-railway.ps1
+```
+
+**Mac/Linux:**
+```bash
+chmod +x deploy-railway.sh
+./deploy-railway.sh
+```
+
+### Opción 2: Manual
+
+1. Instala Railway CLI: `npm install -g @railway/cli`
+2. Login: `railway login`
+3. Inicializa: `railway init`
+4. Agrega PostgreSQL: `railway add --database postgresql`
+5. Deploy: `railway up`
+
+📚 **Documentación completa**: [RAILWAY_DEPLOYMENT.md](RAILWAY_DEPLOYMENT.md)
+
+### Variables de Entorno en Railway
+
+```env
+# Automáticas (provistas por Railway)
+DATABASE_URL=postgresql://...
+
+# Manuales (debes configurar)
+NODE_ENV=production
+PORT=4000  # Para API
+PORT=3000  # Para Web
+```
 
 ## Decisiones principales
 
