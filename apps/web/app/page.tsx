@@ -12,11 +12,11 @@ export default function HomePage() {
           </div>
         </div>
         <nav style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
+          <Link href="/finanzas" style={{ fontWeight: 700 }}>💰 Mis Finanzas</Link>
           <Link href="/receta">Receta de color</Link>
           <Link href="/buscar">Buscar colores</Link>
           <Link href="/visualizar">Visualizador</Link>
           <Link href="/color">Combinador</Link>
-          <Link href="/cotizar">Cotización</Link>
           <Link href="/studio">Estudio</Link>
         </nav>
       </header>
