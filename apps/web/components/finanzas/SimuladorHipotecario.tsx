@@ -37,10 +37,10 @@ const BANCOS = [
     tcfaRef: 10.8,
     plazoMin: 5,
     plazoMax: 25,
-    cuotaInicialMin: 20,
+    cuotaInicialMin: 10,
     montoMin: 50000,
     montoMax: 1500000,
-    nota: 'Tasa fija o variable según contrato. TCEA incluye seguro de desgravamen y seguro de inmueble.',
+    nota: 'Cuota inicial desde 10%. Tasa fija o variable según contrato. TCEA incluye seguro de desgravamen y seguro de inmueble.',
     bonoBuenPagador: false,
     bbpMax: 0,
     seguros: true,
@@ -56,10 +56,10 @@ const BANCOS = [
     tcfaRef: 11.0,
     plazoMin: 5,
     plazoMax: 25,
-    cuotaInicialMin: 20,
+    cuotaInicialMin: 10,
     montoMin: 50000,
     montoMax: 1200000,
-    nota: 'Incluye seguro multiriesgo obligatorio. Financiamiento hasta 80% del valor de tasación.',
+    nota: 'Cuota inicial desde 10%. Incluye seguro multiriesgo obligatorio. Financiamiento hasta 90% del valor de tasación.',
     bonoBuenPagador: false,
     bbpMax: 0,
     seguros: true,
@@ -75,10 +75,10 @@ const BANCOS = [
     tcfaRef: 11.4,
     plazoMin: 5,
     plazoMax: 20,
-    cuotaInicialMin: 20,
+    cuotaInicialMin: 10,
     montoMin: 40000,
     montoMax: 1000000,
-    nota: 'Tasas desde 8% para buenos perfiles crediticios. Requiere seguro de vida y multiriesgo.',
+    nota: 'Cuota inicial desde 10%. Tasas desde 8% para buenos perfiles crediticios. Requiere seguro de vida y multiriesgo.',
     bonoBuenPagador: false,
     bbpMax: 0,
     seguros: true,
@@ -94,10 +94,10 @@ const BANCOS = [
     tcfaRef: 10.5,
     plazoMin: 5,
     plazoMax: 25,
-    cuotaInicialMin: 20,
+    cuotaInicialMin: 10,
     montoMin: 50000,
     montoMax: 1500000,
-    nota: 'Financiamiento hasta 80% del valor del inmueble. Tasa fija durante toda la vida del crédito.',
+    nota: 'Cuota inicial desde 10%. Financiamiento hasta 90% del valor del inmueble. Tasa fija durante toda la vida del crédito.',
     bonoBuenPagador: false,
     bbpMax: 0,
     seguros: true,
@@ -113,10 +113,10 @@ const BANCOS = [
     tcfaRef: 8.8,
     plazoMin: 5,
     plazoMax: 25,
-    cuotaInicialMin: 20,
+    cuotaInicialMin: 10,
     montoMin: 20000,
     montoMax: 500000,
-    nota: 'Recomendado solo si ingresos son en dólares. Riesgo cambiario si se gana en soles.',
+    nota: 'Cuota inicial desde 10%. Recomendado solo si ingresos son en dólares. Riesgo cambiario si se gana en soles.',
     bonoBuenPagador: false,
     bbpMax: 0,
     seguros: true,
@@ -132,10 +132,10 @@ const BANCOS = [
     tcfaRef: 8.5,
     plazoMin: 5,
     plazoMax: 25,
-    cuotaInicialMin: 20,
+    cuotaInicialMin: 10,
     montoMin: 15000,
     montoMax: 400000,
-    nota: 'Tasas en dólares históricamente más bajas. Solo recomendado para ingresos en USD.',
+    nota: 'Cuota inicial desde 10%. Tasas en dólares históricamente más bajas. Solo recomendado para ingresos en USD.',
     bonoBuenPagador: false,
     bbpMax: 0,
     seguros: true,
@@ -347,7 +347,7 @@ function SaldoChart({ amort, meses }: { amort: CuotaAmort[]; meses: number }) {
 
 export function SimuladorHipotecario() {
   const [precioInmueble, setPrecioInmueble] = useState(350000);
-  const [pctCuotaInicial, setPctCuotaInicial] = useState(20);
+  const [pctCuotaInicial, setPctCuotaInicial] = useState(10);
   const [plazoAnios, setPlazoAnios] = useState(20);
   const [bancoId, setBancoId] = useState('bcp_soles');
   const [teaPersonalizada, setTeaPersonalizada] = useState(9.0);
@@ -445,13 +445,11 @@ export function SimuladorHipotecario() {
                   Cuota inicial: {pctCuotaInicial}% = {fmt(precioInmueble * pctCuotaInicial / 100, sym)}
                   <input className="fin-input fin-input-sm" type="number" min={banco.cuotaInicialMin} max="80"
                     value={pctCuotaInicial}
-                    onChange={(e) => setPctCuotaInicial(Math.max(banco.cuotaInicialMin, Math.min(80, Number(e.target.value))))} />
-                </label>
+                    onChange={(e) => setPctCuotaInicial(Math.max(banco.cuotaInicialMin, Math.min(80, Number(e.target.value))))} />                </label>
                 <input type="range" min={banco.cuotaInicialMin} max="60" step="5"
                   value={pctCuotaInicial} onChange={(e) => setPctCuotaInicial(Number(e.target.value))}
                   className="fd-range" aria-label="Cuota inicial porcentaje" />
-                <div className="fd-range-labels"><span>{banco.cuotaInicialMin}%</span><span>60%</span></div>
-              </div>
+                <div className="fd-range-labels"><span>{banco.cuotaInicialMin}%</span><span>60%</span></div>              </div>
 
               {/* Plazo */}
               <div className="fd-hipot-field">
