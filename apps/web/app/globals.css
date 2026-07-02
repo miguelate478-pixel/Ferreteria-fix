@@ -2080,3 +2080,75 @@ body::before {
   .qs-root { grid-template-columns: 1fr !important; }
   .qs-summary { border-right: 0 !important; border-bottom: 1px solid var(--line) !important; }
 }
+
+/* ── Gratificación: dos períodos ── */
+.fin-grati-rc-row {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 14px 20px 10px;
+  border-bottom: 1px solid var(--line);
+}
+.fin-grati-rc-row .eyebrow { margin-bottom: 0; }
+.fin-grati-rc-row b { font-family: Georgia, serif; font-size: 18px; }
+.fin-grati-rc-row small { font-size: 10px; color: var(--muted); }
+
+.fin-grati-periodo {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--line);
+}
+.fin-grati-periodo.pagada { opacity: .75; }
+
+.fin-grati-periodo-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+.fin-grati-periodo-header b { font-size: 14px; display: block; }
+.fin-grati-periodo-sub { font-size: 10px; color: var(--muted); }
+
+.fin-grati-pagada-badge {
+  font-size: 10px;
+  color: var(--accent);
+  background: rgba(104,112,90,.1);
+  padding: 3px 8px;
+  margin-bottom: 6px;
+  display: inline-block;
+}
+
+.fin-grati-pago {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid var(--line);
+}
+.fin-grati-pago b { color: var(--ink); }
+
+.fin-grati-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 20px;
+  background: var(--paper-deep);
+  font-size: 12px;
+}
+.fin-grati-total strong {
+  font-family: Georgia, serif;
+  font-size: 24px;
+  font-weight: 400;
+}
+
+/* dark mode override */
+.fd-shell .fin-grati-periodo { border-bottom-color: var(--fd-border); }
+.fd-shell .fin-grati-pagada-badge { color: var(--fd-accent); background: rgba(124,131,253,.1); }
+.fd-shell .fin-grati-pago { color: var(--fd-muted); border-top-color: var(--fd-border); }
+.fd-shell .fin-grati-pago b { color: var(--fd-text); }
+.fd-shell .fin-grati-total { background: rgba(255,255,255,.04); }
+.fd-shell .fin-grati-total strong { color: var(--fd-accent); }
+.fd-shell .fin-grati-rc-row { border-bottom-color: var(--fd-border); }
+.fd-shell .fin-grati-rc-row b { color: var(--fd-text); }
+.fd-shell .fin-grati-rc-row small { color: var(--fd-muted); }
