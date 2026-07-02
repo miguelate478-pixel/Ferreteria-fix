@@ -571,18 +571,24 @@ export function SimuladorHipotecario() {
                 <small>{((resultado.totalIntereses / resultado.prestamo) * 100).toFixed(0)}% del préstamo</small>
               </div>
               <div className="fd-hipot-kpi">
-                <span>TEM (tasa mensual)</span>
-                <strong>{resultado.tcem.toFixed(4)}%</strong>
-                <small>TEA {tea}% anual</small>
+                <span>Sueldo mín. recomendado (30%)</span>
+                <strong>S/ {(resultado.cuotaTotal / 0.30).toFixed(0)}</strong>
+                <small>Para que la cuota no pase el 30% del ingreso</small>
+              </div>
+              <div className="fd-hipot-kpi">
+                <span>Sueldo mín. máximo banco (40%)</span>
+                <strong>S/ {(resultado.cuotaTotal / 0.40).toFixed(0)}</strong>
+                <small>Límite que suelen aceptar los bancos</small>
               </div>
             </div>
 
             {/* Seguros */}
             {banco.seguros && (
               <div className="fd-seguros-row">
-                <span>Seguro de desgravamen ~{fmt(resultado.seguroDesgravamen, sym)}/mes</span>
+                <span>TEM: {resultado.tcem.toFixed(4)}% mensual (TEA {tea}%)</span>
+                <span>Seguro desgravamen ~{fmt(resultado.seguroDesgravamen, sym)}/mes (1er mes)</span>
                 <span>Seguro multiriesgo ~{fmt(resultado.seguroInmueble, sym)}/mes</span>
-                <span className="fd-seguros-nota">Estimaciones de mercado. El banco define los montos exactos.</span>
+                <span className="fd-seguros-nota">Seguros estimados. El banco define los montos exactos.</span>
               </div>
             )}
 

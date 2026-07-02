@@ -914,7 +914,7 @@
 
 .fd-hipot-kpis {
   display: grid;
-  grid-template-columns: 2fr repeat(5, 1fr);
+  grid-template-columns: 2fr repeat(6, 1fr);
   gap: 1px;
   background: var(--fd-border);
   border: 1px solid var(--fd-border);
