@@ -852,3 +852,234 @@
   .fd-arcs-row { gap: 4px; }
   .fd-income-badge { display: none; }
 }
+
+/* ═══════════════════════════════════════
+   SIMULADOR HIPOTECARIO
+═══════════════════════════════════════ */
+
+.fd-hipot-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px 24px;
+}
+
+.fd-hipot-field { display: flex; flex-direction: column; gap: 6px; }
+
+.fd-range {
+  width: 100%;
+  accent-color: var(--fd-accent);
+  margin-top: 4px;
+}
+
+.fd-range-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 9px;
+  color: var(--fd-muted);
+}
+
+.fd-tea-badge {
+  background: rgba(124,131,253,.2);
+  color: var(--fd-accent);
+  padding: 3px 10px;
+  border-radius: 4px;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.fd-banco-nota {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 20px;
+  background: rgba(255,255,255,.03);
+  border-top: 1px solid var(--fd-border);
+  border-bottom: 1px solid var(--fd-border);
+  font-size: 11px;
+}
+.fd-banco-nota span { font-size: 22px; flex-shrink: 0; }
+.fd-banco-nota b { font-size: 12px; color: var(--fd-text); display: block; margin-bottom: 3px; }
+.fd-banco-nota p { margin: 0; color: var(--fd-muted); line-height: 1.5; }
+
+.fd-bbp-banner {
+  padding: 10px 20px;
+  background: rgba(107,203,119,.12);
+  border-left: 3px solid #6bcb77;
+  font-size: 12px;
+  color: #6bcb77;
+}
+
+/* resultados */
+.fd-hipot-results { padding: 0 20px 20px; }
+
+.fd-hipot-kpis {
+  display: grid;
+  grid-template-columns: 2fr repeat(5, 1fr);
+  gap: 1px;
+  background: var(--fd-border);
+  border: 1px solid var(--fd-border);
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 20px 0 12px;
+}
+
+.fd-hipot-kpi {
+  background: var(--fd-card);
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.fd-hipot-kpi span { font-size: 10px; color: var(--fd-muted); }
+.fd-hipot-kpi strong { font-size: 16px; font-weight: 700; color: var(--fd-text); }
+.fd-hipot-kpi small { font-size: 9px; color: var(--fd-muted); }
+.fd-hipot-kpi.main { background: rgba(124,131,253,.08); }
+.fd-hipot-kpi.main strong { font-size: 22px; color: var(--fd-accent); }
+
+/* seguros */
+.fd-seguros-row {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  font-size: 10px;
+  color: var(--fd-muted);
+  padding: 6px 0 12px;
+  border-bottom: 1px solid var(--fd-border);
+  margin-bottom: 12px;
+}
+.fd-seguros-nota { color: rgba(255,255,255,.2); font-style: italic; }
+
+/* relación cuota/ingreso */
+.fd-relacion-row {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--fd-border);
+  margin-bottom: 16px;
+}
+.fd-relacion-bar-wrap {
+  height: 8px;
+  background: rgba(255,255,255,.08);
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+  margin-bottom: 8px;
+}
+.fd-relacion-bar { height: 100%; border-radius: 4px; transition: width .4s ease; }
+.fd-relacion-mark30 {
+  position: absolute;
+  left: 30%;
+  top: 0; bottom: 0;
+  width: 1px;
+  background: rgba(255,255,255,.3);
+}
+.fd-relacion-mark40 {
+  position: absolute;
+  left: 40%;
+  top: 0; bottom: 0;
+  width: 1px;
+  background: rgba(255,255,255,.2);
+}
+.fd-relacion-info { display: flex; gap: 10px; align-items: baseline; font-size: 12px; }
+.fd-relacion-info strong { font-size: 15px; font-weight: 700; flex-shrink: 0; }
+.fd-relacion-info span { font-size: 11px; color: var(--fd-muted); }
+
+/* gráficos */
+.fd-hipot-charts {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--fd-border);
+  margin-bottom: 8px;
+}
+.fd-hipot-chart-block { }
+.fd-hipot-chart-label { font-size: 10px; color: var(--fd-muted); margin-bottom: 8px; font-weight: 700; letter-spacing: .06em; }
+.fd-pie-legend { font-size: 11px; color: var(--fd-muted); display: flex; flex-direction: column; gap: 6px; }
+.fd-legend-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-right: 6px; }
+
+/* tabla amortización */
+.fd-amort-section { }
+
+.fd-amort-table { margin-top: 8px; }
+
+.fd-amort-head {
+  display: grid;
+  grid-template-columns: 40px 1fr 1fr 1fr 1fr;
+  padding: 6px 12px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  color: var(--fd-muted);
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--fd-border);
+  background: rgba(255,255,255,.03);
+  border-radius: 6px 6px 0 0;
+}
+
+.fd-amort-row {
+  display: grid;
+  grid-template-columns: 40px 1fr 1fr 1fr 1fr;
+  padding: 7px 12px;
+  font-size: 11px;
+  border-bottom: 1px solid rgba(255,255,255,.04);
+  transition: background .1s;
+}
+.fd-amort-row:hover { background: rgba(255,255,255,.03); }
+.fd-amort-n { color: var(--fd-muted); font-size: 10px; }
+
+.fd-amort-pag {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 0;
+  font-size: 11px;
+  color: var(--fd-muted);
+}
+
+/* comparador */
+.fd-hipot-compare { }
+
+.fd-compare-table { }
+
+.fd-compare-head {
+  display: grid;
+  grid-template-columns: 2fr 80px 80px 1fr 1fr;
+  padding: 8px 20px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  color: var(--fd-muted);
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--fd-border);
+}
+
+.fd-compare-row {
+  display: grid;
+  grid-template-columns: 2fr 80px 80px 1fr 1fr;
+  padding: 12px 20px;
+  font-size: 12px;
+  border-bottom: 1px solid var(--fd-border);
+  align-items: center;
+  transition: background .12s;
+}
+.fd-compare-row:hover { background: rgba(255,255,255,.03); }
+.fd-compare-row.mejor { background: rgba(107,203,119,.06); border-left: 3px solid #6bcb77; }
+.fd-compare-row span { color: var(--fd-muted); }
+.fd-compare-row strong { font-size: 14px; }
+
+/* responsive */
+@media (max-width: 860px) {
+  .fd-hipot-form-grid { grid-template-columns: 1fr; }
+  .fd-hipot-kpis { grid-template-columns: 1fr 1fr; }
+  .fd-hipot-kpi.main { grid-column: 1 / -1; }
+  .fd-hipot-charts { flex-direction: column; }
+  .fd-compare-head, .fd-compare-row { grid-template-columns: 1.5fr 60px 1fr; }
+  .fd-compare-head span:nth-child(3), .fd-compare-row span:nth-child(3),
+  .fd-compare-head span:nth-child(5), .fd-compare-row span:last-child { display: none; }
+}
+
+@media (max-width: 560px) {
+  .fd-hipot-kpis { grid-template-columns: 1fr; }
+  .fd-amort-head, .fd-amort-row { grid-template-columns: 32px 1fr 1fr 1fr; }
+  .fd-amort-head span:last-child, .fd-amort-row span:last-child { display: none; }
+}

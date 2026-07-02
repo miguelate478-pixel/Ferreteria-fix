@@ -10,7 +10,9 @@ import { Recordatorios } from '../../components/finanzas/Recordatorios';
 import { Regla503020 } from '../../components/finanzas/Regla503020';
 import { HistorialMensual } from '../../components/finanzas/HistorialMensual';
 
-type Section = 'dashboard' | 'gastos' | 'ahorro' | 'deudas' | 'recordatorios' | 'salud' | 'historial' | 'laboral';
+import { SimuladorHipotecario } from '../../components/finanzas/SimuladorHipotecario';
+
+type Section = 'dashboard' | 'gastos' | 'ahorro' | 'deudas' | 'recordatorios' | 'salud' | 'historial' | 'laboral' | 'hipoteca';
 
 function getMes() {
   const d = new Date();
@@ -333,6 +335,7 @@ const NAV_ITEMS: Array<{ id: Section; icon: string; label: string; group?: strin
   { id: 'salud',         icon: '📊', label: 'Salud 50/30/20', group: 'ANÁLISIS' },
   { id: 'historial',     icon: '📈', label: 'Historial' },
   { id: 'laboral',       icon: '🧮', label: 'CTS / Grati / Liq.', group: 'LABORAL' },
+  { id: 'hipoteca',      icon: '🏠', label: 'Simulador Hipotecario', group: 'HERRAMIENTAS' },
 ];
 
 export default function FinanzasPage() {
@@ -386,6 +389,7 @@ export default function FinanzasPage() {
           {section === 'salud'         && <Regla503020 />}
           {section === 'historial'     && <HistorialMensual />}
           {section === 'laboral'       && <CalculosLaborales />}
+          {section === 'hipoteca'      && <SimuladorHipotecario />}
         </div>
         <footer className="fd-footer-note">
           Cálculos referenciales · Legislación peruana · Sin servidores · Datos locales
