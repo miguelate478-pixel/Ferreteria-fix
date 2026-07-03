@@ -181,17 +181,17 @@ export class ColorsService {
     });
 
     const ranked = allColors
-      .map((color) => ({
+      .map((color: any) => ({
         ...color,
         distance: colorDistance(resultHex, color.rgbHex),
       }))
-      .sort((a, b) => a.distance - b.distance)
+      .sort((a: any, b: any) => a.distance - b.distance)
       .slice(0, 5)
-      .map(({ distance, ...color }) => ({
+      .map(({ distance, ...color }: any) => ({
         ...color,
         distance: Math.round(distance * 1000) / 1000,
-        inStock: color.formulas.some((f) =>
-          f.productVariant.inventoryBalances.some((ib) => Number(ib.available) > 0),
+        inStock: color.formulas.some((f: any) =>
+          f.productVariant.inventoryBalances.some((ib: any) => Number(ib.available) > 0),
         ),
       }));
 
@@ -270,18 +270,18 @@ export class ColorsService {
     if (!interpreted) {
       // Fallback: búsqueda de texto simple
       const textResults = allColors.filter(
-        (c) =>
+        (c: any) =>
           c.name.toLowerCase().includes(query.toLowerCase()) ||
           c.code.toLowerCase().includes(query.toLowerCase()),
       );
       return {
         query,
         interpreted: null,
-        results: textResults.slice(0, limit).map((c) => ({
+        results: textResults.slice(0, limit).map((c: any) => ({
           ...c,
           distance: 0,
-          inStock: c.formulas.some((f) =>
-            f.productVariant.inventoryBalances.some((ib) => Number(ib.available) > 0),
+          inStock: c.formulas.some((f: any) =>
+            f.productVariant.inventoryBalances.some((ib: any) => Number(ib.available) > 0),
           ),
         })),
       };
@@ -294,16 +294,16 @@ export class ColorsService {
     }
 
     const ranked = allColors
-      .map((c) => ({
+      .map((c: any) => ({
         ...c,
         distance: colorDistance(refHex, c.rgbHex),
-        inStock: c.formulas.some((f) =>
-          f.productVariant.inventoryBalances.some((ib) => Number(ib.available) > 0),
+        inStock: c.formulas.some((f: any) =>
+          f.productVariant.inventoryBalances.some((ib: any) => Number(ib.available) > 0),
         ),
       }))
-      .sort((a, b) => a.distance - b.distance)
+      .sort((a: any, b: any) => a.distance - b.distance)
       .slice(0, limit)
-      .map(({ distance, ...c }) => ({
+      .map(({ distance, ...c }: any) => ({
         ...c,
         distance: Math.round(distance * 1000) / 1000,
       }));
